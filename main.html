@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seungmo's Foodie Reviews</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Top bar styles */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            padding: 20px 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-links li {
+            list-style: none;
+            margin: 0 12px;
+        }
+
+        .nav-links li a {
+            position: relative;
+            color: #333;
+            font-size: 20px;
+            font-weight: 500;
+            padding: 6px 0;
+            text-decoration: none;
+        }
+
+        .nav-links li a:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: #34efdf;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+        }
+
+        .nav-links li a:hover:before {
+            width: 100%;
+        }
+
+        .nav-links li.center a:before {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-links li.upward a:before {
+            width: 100%;
+            bottom: -5px;
+            opacity: 0;
+        }
+
+        .nav-links li.upward a:hover:before {
+            bottom: 0px;
+            opacity: 1;
+        }
+
+        .nav-links li.forward a:before {
+            width: 100%;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+        }
+
+        .nav-links li.forward a:hover:before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        /* Map container styles */
+        #map {
+            height: calc(100vh - 40px); /* Adjust height to fit the whole page minus the top bar height */
+            width: 50%;
+            margin-top: 10px; /* Ensure the map starts below the top bar */
+            border-radius: 15px;
+        }
+
+        #contact-page-content {
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top bar -->
+    <div class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="#" onclick="showContactPage()">Contact</a></li> <!-- Call JavaScript function to show Contact page -->
+    </div>
+
+    <!-- Map container -->
+    <div class="container">
+        <!-- Map container -->
+        <div id="map"></div>
+
+        <!-- Contact page content -->
+        <div id="contact-page-content">
+            <h1>Contact Page</h1>
+            <p>Contact me at:</p>
+            <p>Name: Seungmo Lee</p>
+            <p>Email: seungmo6@g.ucla.edu</p>
+        </div>
+        
+        <!-- Reviews container -->
+        <div id="reviews-container" style="width: 50%; height: 100%; float: right;"></div>
+        
+    </div>
+
+    <!-- Google Maps API script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=API&callback=initMap" async defer></script>
+
+    <!-- JavaScript for initializing the map -->
+    <script>
+        function initMap() {
+            // Initialize the map
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat:34.06283913342592, lng:-118.44514693523702}, // Example center (New York City)
+                zoom: 16 // Example zoom level
+            });
+
+            // Example restaurant data
+            var restaurants = [
+                {
+                    name: "Northern Cafe Hot Pot Westwood",
+                    location: {lat:34.06132346605083, lng:-118.44648286455156}, 
+                    reviewPage: "reviews/northerncafe.html" // Example review page URL
+                },
+                {
+                    name: "Bacio di Latte @ Westfield Century city",
+                    location: {lat:34.05924072660081, lng:-118.42022720742077}, 
+                    reviewPage: "reviews/baciodilatte.html" 
+                },
+                // Add more restaurant data as needed
+            ];
+
+            // Add markers for each restaurant
+            restaurants.forEach(function(restaurant) {
+                var marker = new google.maps.Marker({
+                    position: restaurant.location,
+                    map: map,
+                    title: restaurant.name
+                });
+
+                // Add click event listener to marker
+                var infoWindowContent = '<div><h2>' + restaurant.name + '</h2><button onclick="showReviews(\'' + restaurant.reviewPage + '\')">See Reviews</button></div>';
+
+                // Add click event listener to marker
+                marker.addListener('click', function () {
+                    // Create InfoWindow with initial content
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: infoWindowContent
+                    });
+
+                    // Open InfoWindow
+                    infoWindow.open(map, marker);
+                });
+            });
+        }
+
+        function showReviews(reviewPage) {
+            // Load reviewPage content into the reviews container
+            var reviewsContainer = document.getElementById('reviews-container');
+            reviewsContainer.innerHTML = '<object type="text/html" data="' + reviewPage + '" style="width: 100%; height: 100%;"></object>';
+        }
+
+        function showContactPage() {
+            // Show the Contact page content
+            document.getElementById('contact-page-content').style.display = 'block';
+        }
+        
+    </script>
+</body>
+</html>
