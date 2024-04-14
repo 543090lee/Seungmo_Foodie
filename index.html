@@ -115,81 +115,82 @@
         <!-- Map container -->
         <div id="map"></div>
 
+       <!-- Reviews container -->
+        <div id="reviews-container" style="width: 50%; height: 100%; float: right; display: none;"></div>
+
         <!-- Contact page content -->
-        <div id="contact-page-content">
-            <h1>Contact Page</h1>
-            <p>Contact me at:</p>
-            <p>Name: Seungmo Lee</p>
-            <p>Email: seungmo6@g.ucla.edu</p>
+        <div id="contact-page-content" style="display: none;">
+            <!-- Your contact page content goes here -->
         </div>
-        
-        <!-- Reviews container -->
-        <div id="reviews-container" style="width: 50%; height: 100%; float: right;"></div>
         
     </div>
 
-    <!-- Google Maps API script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=API&callback=initMap" async defer></script>
 
     <!-- JavaScript for initializing the map -->
     <script>
+        require('dotenv').config();
+
+        var map;
         function initMap() {
             // Initialize the map
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat:34.06283913342592, lng:-118.44514693523702}, // Example center (New York City)
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat:34.06283913342592, lng:-118.44514693523702}, 
                 zoom: 16 // Example zoom level
             });
 
-            // Example restaurant data
-            var restaurants = [
-                {
-                    name: "Northern Cafe Hot Pot Westwood",
-                    location: {lat:34.06132346605083, lng:-118.44648286455156}, 
-                    reviewPage: "reviews/northerncafe.html" // Example review page URL
-                },
-                {
-                    name: "Bacio di Latte @ Westfield Century city",
-                    location: {lat:34.05924072660081, lng:-118.42022720742077}, 
-                    reviewPage: "reviews/baciodilatte.html" 
-                },
-                // Add more restaurant data as needed
-            ];
+            fetch('restaurants.json')
+                .then(response => response.json())
+                .then(restaurants => {
+                    console.log('Fetched restaurant data:', restaurants);
+                    // Add markers for each restaurant
+                    restaurants.forEach(function (restaurant) {
+                        var marker = new google.maps.Marker({
+                            position: { lat: restaurant.location.lat, lng: restaurant.location.lng },
+                            map: map,
+                            title: restaurant.name
+                        });
 
-            // Add markers for each restaurant
-            restaurants.forEach(function(restaurant) {
-                var marker = new google.maps.Marker({
-                    position: restaurant.location,
-                    map: map,
-                    title: restaurant.name
-                });
+                        // Create InfoWindow content with only restaurant name initially
+                        var infoWindowContent = '<div><h2>' + restaurant.name + '</h2><button onclick="showReviews(\'' + restaurant.reviewPage + '\')">See Reviews</button></div>';
 
-                // Add click event listener to marker
-                var infoWindowContent = '<div><h2>' + restaurant.name + '</h2><button onclick="showReviews(\'' + restaurant.reviewPage + '\')">See Reviews</button></div>';
+                        // Add click event listener to marker
+                        marker.addListener('click', function () {
+                            // Create InfoWindow with initial content
+                            var infoWindow = new google.maps.InfoWindow({
+                                content: infoWindowContent
+                            });
 
-                // Add click event listener to marker
-                marker.addListener('click', function () {
-                    // Create InfoWindow with initial content
-                    var infoWindow = new google.maps.InfoWindow({
-                        content: infoWindowContent
+                            // Open InfoWindow
+                            infoWindow.open(map, marker);
+
+                            // Hide contact page content if visible
+                            document.getElementById('contact-page-content').style.display = 'none';
+                        });
                     });
-
-                    // Open InfoWindow
-                    infoWindow.open(map, marker);
-                });
-            });
+                })
+                .catch(error => console.error('Error fetching restaurant data:', error));
         }
 
         function showReviews(reviewPage) {
             // Load reviewPage content into the reviews container
             var reviewsContainer = document.getElementById('reviews-container');
             reviewsContainer.innerHTML = '<object type="text/html" data="' + reviewPage + '" style="width: 100%; height: 100%;"></object>';
+            // Show reviews container and hide contact container
+            document.getElementById('reviews-container').style.display = 'block';
+            document.getElementById('contact-page-content').style.display = 'none';
         }
 
         function showContactPage() {
-            // Show the Contact page content
+            // Show contact page content and hide reviews container
             document.getElementById('contact-page-content').style.display = 'block';
+            document.getElementById('reviews-container').style.display = 'none';
         }
         
     </script>
+     <!-- Load the Google Maps API script -->
+     <script src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap" async defer></script>
+    
+     <!-- Load dotenv -->
+     <script src="https://cdn.jsdelivr.net/npm/dotenv@10.0.0/dist/dotenv.min.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+[
+    {
+      "name": "Northern Cafe Hot Pot Westwood",
+      "location": {"lat": 34.06132346605083, "lng": -118.44648286455156},
+      "Flavor and Taste": 0,
+      "Service": 0,
+      "Creativity": 0,
+      "Value for Money" :0,
+      "Ambiance and Atmosphere" :0
+    },
+    {
+      "name": "Bacio di Latte @ Westfield Century city",
+      "location": {"lat": 34.05924072660081, "lng": -118.42022720742077},
+      "Flavor and Taste": 0,
+      "Service": 0,
+      "Creativity": 0,
+      "Value for Money" :0,
+      "Ambiance and Atmosphere" :0
+    }
+]
