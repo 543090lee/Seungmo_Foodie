@@ -99,6 +99,46 @@
             box-sizing: border-box;
             display: none;
         }
+        #reviews-container {
+            display: none;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 10px;
+            font-family: Arial, sans-serif;
+            width: 50%; 
+            box-sizing: border-box;
+            height: calc(100vh - 40px);
+            text-align: center;
+        }
+
+        #reviews-container h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #reviews-container p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        #reviews-container button {
+            background-color: #34efdf;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #reviews-container button:hover {
+            background-color: #2bc2ad;
+        }
     </style>
 </head>
 <body>
@@ -128,8 +168,121 @@
 
     <!-- JavaScript for initializing the map -->
     <script>
-        require('dotenv').config();
-
+        var restaurants = 
+            [
+                {
+                "name": "Northern Cafe Hot Pot Westwood",
+                "location": {"lat": 34.06132346605083, "lng": -118.44648286455156},
+                "cuisine" : "Chinese",
+                "dish" : "Hot Pot",
+                "Date": "2/5/24",
+                "Flavor and Taste": 7.5,
+                "Service": 5,
+                "Creativity": 6,
+                "Value for Money" :4,
+                "Ambiance and Atmosphere" :6,
+                "Favorite Menu": "Beef Hot Pot",
+                "ID": "hotpot"
+                },
+                {
+                "name": "Bacio di Latte @ Westfield Century city",
+                "location": {"lat": 34.05924072660081, "lng": -118.42022720742077},
+                "cuisine" : "Italian",
+                "dish" : "Gelato",
+                "Date": "3/22/24",
+                "Flavor and Taste": 8,
+                "Service": 6,
+                "Creativity": 5,
+                "Value for Money" :4,
+                "Ambiance and Atmosphere" :6,
+                "Favorite Menu": "Rose Gelato",
+                "ID": "centurycitygelato"
+                },
+                {
+                "name": "Fatamorgana Gelato - Beverly Hills",
+                "location": {"lat":34.0651932795262, "lng": -118.39890606180799},
+                "cuisine" : "Italian",
+                "dish" : "Gelato",
+                "Date": "4/7/24",
+                "Flavor and Taste": 5.5,
+                "Service": 6,
+                "Creativity": 6.5,
+                "Value for Money" :5,
+                "Ambiance and Atmosphere" :5,
+                "Favorite Menu": "Rose Gelato",
+                "ID": "fatamorganagelato"
+                },
+                {
+                "name": "Kali",
+                "location": {"lat": 34.08340372594269, "lng": -118.32444833033381},
+                "cuisine" : "American",
+                "dish" : "Modern",
+                "Date": "6/9/23",
+                "Flavor and Taste": 9,
+                "Service": 8,
+                "Creativity": 9,
+                "Value for Money" :3,
+                "Ambiance and Atmosphere" :6.5,
+                "Favorite Menu": "Crowded Beach",
+                "ID": "kali"
+                },
+                {
+                "name": "Liberty Bagels Midtown",
+                "location": {"lat": 40.75252306212864, "lng": -73.99253774661965}, 
+                "cuisine" : "American",
+                "dish" : "Bagel",
+                "Date": "3/31/24",
+                "Flavor and Taste": 6,
+                "Service": 5,
+                "Creativity": 7,
+                "Value for Money" :5,
+                "Ambiance and Atmosphere" :4,
+                "Favorite Menu": "Rainbow Bagel",
+                "ID": "libertybagel"
+                },
+                {
+                "name": "Magnolia Bakery - Grand Central",
+                "location": {"lat": 40.75256622032725, "lng": -73.97677397338862}, 
+                "cuisine" : "American",
+                "dish" : "Bakery",
+                "Date": "3/31/24",
+                "Flavor and Taste": 7,
+                "Service": 5,
+                "Creativity": 6,
+                "Value for Money" :5,
+                "Ambiance and Atmosphere" :4,
+                "Favorite Menu": "Banana Pudding",
+                "ID": "magnoliabakery"
+                },
+                {
+                "name": "La Grande Boucherie",
+                "location": {"lat": 40.76262638421916, "lng": -73.98084378220159}, 
+                "cuisine" : "French",
+                "dish" : "nouveau-style",
+                "Date": "3/30/24",
+                "Flavor and Taste": 7.5,
+                "Service": 6,
+                "Creativity": 6,
+                "Value for Money" :3,
+                "Ambiance and Atmosphere" :6,
+                "Favorite Menu": "French Onion Soup",
+                "ID": "lagrande"
+                },
+                {
+                "name": "Mitr Thai Restaurant",
+                "location": {"lat": 40.75688604281783, "lng": -73.98042274661965}, 
+                "cuisine" : "Thai",
+                "dish" : "Traditional Thai",
+                "Date": "3/30/24",
+                "Flavor and Taste": 7.5,
+                "Service": 6,
+                "Creativity": 5,
+                "Value for Money" :6,
+                "Ambiance and Atmosphere" :6.5,
+                "Favorite Menu": "Green Curry",
+                "ID": "mitrthai"
+                }
+            ]
         var map;
         function initMap() {
             // Initialize the map
@@ -138,45 +291,56 @@
                 zoom: 16 // Example zoom level
             });
 
-            fetch('restaurants.json')
-                .then(response => response.json())
-                .then(restaurants => {
-                    console.log('Fetched restaurant data:', restaurants);
-                    // Add markers for each restaurant
-                    restaurants.forEach(function (restaurant) {
-                        var marker = new google.maps.Marker({
-                            position: { lat: restaurant.location.lat, lng: restaurant.location.lng },
-                            map: map,
-                            title: restaurant.name
-                        });
+            restaurants.forEach(function (restaurant, index) {
+                var marker = new google.maps.Marker({
+                    position: { lat: restaurant.location.lat, lng: restaurant.location.lng },
+                    map: map,
+                    title: restaurant.name
+                });
+                var totalScore = restaurant['Flavor and Taste'] + restaurant.Service + restaurant.Creativity +  restaurant['Ambiance and Atmosphere'];
+                var averageScore = totalScore / 4;
 
-                        // Create InfoWindow content with only restaurant name initially
-                        var infoWindowContent = '<div><h2>' + restaurant.name + '</h2><button onclick="showReviews(\'' + restaurant.reviewPage + '\')">See Reviews</button></div>';
-
-                        // Add click event listener to marker
-                        marker.addListener('click', function () {
-                            // Create InfoWindow with initial content
-                            var infoWindow = new google.maps.InfoWindow({
-                                content: infoWindowContent
-                            });
-
-                            // Open InfoWindow
-                            infoWindow.open(map, marker);
-
-                            // Hide contact page content if visible
-                            document.getElementById('contact-page-content').style.display = 'none';
-                        });
+                // Add click event listener to marker
+                var infoWindowContent = '<div><h2>' + restaurant.name + '</h2>';
+                infoWindowContent += '<p>Average Score: ' + averageScore.toFixed(2) + '</p>';
+                infoWindowContent += '<button onclick="showReviews(' + index + ')">See Reviews</button></div>';
+                // Add click event listener to marker
+                marker.addListener('click', function() {
+                    // Create InfoWindow with initial content
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: infoWindowContent
                     });
-                })
-                .catch(error => console.error('Error fetching restaurant data:', error));
+
+                    // Open InfoWindow
+                    infoWindow.open(map, marker);
+
+                    // Hide contact page content if visible
+                    document.getElementById('contact-page-content').style.display = 'none';
+                });
+            });
         }
 
-        function showReviews(reviewPage) {
-            // Load reviewPage content into the reviews container
+        function showReviews(index) {  
+            var imageWidth = 400;
+            var imageHeight = 400;
+            var restaurant = restaurants[index];
+            // Generate HTML for displaying all categories of restaurant reviews
+            var html = '<div><h2>' + restaurant.name + '</h2>';
+            html += '<img src="pictures/' + restaurant.ID + '.jpg" alt="Restaurant Image" width="' + imageWidth + '" height="' + imageHeight + '" />'; // Resized image
+            html += '<p>Date: ' + restaurant.Date + '</p>';
+            html += '<p>Flavor and Taste: ' + restaurant['Flavor and Taste'] + '</p>';
+            html += '<p>Service: ' + restaurant.Service + '</p>';
+            html += '<p>Creativity: ' + restaurant.Creativity + '</p>';
+            html += '<p>Value for Money: ' + restaurant['Value for Money'] + '</p>';
+            html += '<p>Ambiance and Atmosphere: ' + restaurant['Ambiance and Atmosphere'] + '</p>';
+            html += '<p>Favorite Menu: ' + restaurant['Favorite Menu'] + '</p>';
+
+            // Display the generated HTML in the reviews container
             var reviewsContainer = document.getElementById('reviews-container');
-            reviewsContainer.innerHTML = '<object type="text/html" data="' + reviewPage + '" style="width: 100%; height: 100%;"></object>';
+            reviewsContainer.innerHTML = html;
+
             // Show reviews container and hide contact container
-            document.getElementById('reviews-container').style.display = 'block';
+            reviewsContainer.style.display = 'block';
             document.getElementById('contact-page-content').style.display = 'none';
         }
 
@@ -188,7 +352,7 @@
         
     </script>
      <!-- Load the Google Maps API script -->
-     <script src="https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap" async defer></script>
+     <script src="https://maps.googleapis.com/maps/api/js?key=API&callback=initMap" async defer></script>
     
      <!-- Load dotenv -->
      <script src="https://cdn.jsdelivr.net/npm/dotenv@10.0.0/dist/dotenv.min.js" defer></script>
